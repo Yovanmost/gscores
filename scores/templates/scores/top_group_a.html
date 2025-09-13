@@ -1,12 +1,6 @@
+{% extends "scores/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Top 10 - Group A</title>
-</head>
-<body>
-    {% extends "scores/base.html" %}
-    {% block content %}
+{% block content %}
     <h1 style="margin-bottom: 24px; text-align: center;">Top 10 Students - Group A</h1>
     <table style="width:100%; border-collapse: collapse; background: #fff;">
         <thead>
@@ -36,6 +30,4 @@
             {% endfor %}
         </tbody>
     </table>
-    {% endblock %}
-</body>
-</html>
+{% endblock %}

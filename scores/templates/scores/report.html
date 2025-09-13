@@ -1,18 +1,9 @@
+{% extends "scores/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Score Report</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    {% extends "scores/base.html" %}
-    {% block content %}
-
+{% block content %}
     <h1>Score Report by Subject</h1>
-
     <canvas id="reportChart"></canvas>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const data = {
             labels: {{ labels|safe }},
@@ -50,7 +41,4 @@
             }
         });
     </script>
-
-    {% endblock %}
-</body>
-</html>
+{% endblock %}

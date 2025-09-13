@@ -1,12 +1,6 @@
+{% extends "scores/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Check Score</title>
-</head>
-<body>
-    {% extends "scores/base.html" %}
-    {% block content %} 
+{% block content %}
     <h1>Check Student Score</h1>
 
     <form method="get" style="display: flex; gap: 8px; align-items: center;">
@@ -35,6 +29,4 @@
             </ul>
         </div>
     {% endif %}
-    {% endblock %}
-</body>
-</html>
+{% endblock %}
