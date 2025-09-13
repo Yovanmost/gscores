@@ -1,0 +1,1 @@
+web: gunicorn gscores.wsgi:application
