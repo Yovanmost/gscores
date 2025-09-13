@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Score</title>
+</head>
+<body>
+    {% extends "scores/base.html" %}
+    {% block content %} 
+    <h1>Check Student Score</h1>
+
+    <form method="get" style="display: flex; gap: 8px; align-items: center;">
+        {{ form.as_p }}
+        <button type="submit">Check</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red">{{ error }}</p>
+    {% endif %}
+
+    {% if student %}
+        <div class="result">
+            <h2>Result for {{ student.sbd }}</h2>
+            <ul>
+                <li>Toán: {{ student.toan }}</li>
+                <li>Ngữ văn: {{ student.ngu_van }}</li>
+                <li>Ngoại ngữ: {{ student.ngoai_ngu }}</li>
+                <li>Vật lí: {{ student.vat_li }}</li>
+                <li>Hóa học: {{ student.hoa_hoc }}</li>
+                <li>Sinh học: {{ student.sinh_hoc }}</li>
+                <li>Lịch sử: {{ student.lich_su }}</li>
+                <li>Địa lí: {{ student.dia_li }}</li>
+                <li>GDCD: {{ student.gdcd }}</li>
+                <li>Mã ngoại ngữ: {{ student.ma_ngoai_ngu }}</li>
+            </ul>
+        </div>
+    {% endif %}
+    {% endblock %}
+</body>
+</html>

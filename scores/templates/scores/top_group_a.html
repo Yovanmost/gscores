@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Top 10 - Group A</title>
+</head>
+<body>
+    {% extends "scores/base.html" %}
+    {% block content %}
+    <h1 style="margin-bottom: 24px; text-align: center;">Top 10 Students - Group A</h1>
+    <table style="width:100%; border-collapse: collapse; background: #fff;">
+        <thead>
+            <tr style="background: #2c3e50; color: #fff; text-align: center;">
+                <th style="padding: 12px; text-align: center;">Rank</th>
+                <th style="padding: 12px; text-align: center;">SBD</th>
+                <th style="padding: 12px; text-align: center;">Toán</th>
+                <th style="padding: 12px; text-align: center;">Vật Lý</th>
+                <th style="padding: 12px; text-align: center;">Hóa Học</th>
+                <th style="padding: 12px; text-align: center;">Total (Group A)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr style="{% if forloop.counter == 1 %}background: #ffe082;{% elif forloop.counter == 2 %}background: #fff9c4;{% elif forloop.counter == 3 %}background: #e1bee7;{% endif %}">
+                    <td style="padding: 10px; text-align: center;">{{ forloop.counter }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ student.sbd }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ student.toan }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ student.vat_li }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ student.hoa_hoc }}</td>
+                    <td style="padding: 10px; text-align: center; font-weight: bold;">{{ student.total_group_a }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 16px; text-align: center;">No students found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endblock %}
+</body>
+</html>
