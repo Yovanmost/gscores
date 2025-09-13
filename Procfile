@@ -1,1 +1,1 @@
-web: gunicorn gscores.wsgi:application
+web: python manage.py collectstatic --noinput && python manage.py flush --noinput && python manage.py migrate && python manage.py seed_students dataset/diem_thi_thpt_2024.csv && gunicorn gscores.wsgi:application --bind 0.0.0.0:$PORT
