@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>G-Scores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">Gscores Web</div>
+    <div class="container">
+        <nav class="sidebar">
+            <div>
+                <center>
+                    <h2>Menu</h2>
+                </center>
+            </div>
+            <a href="report.html">Report Charts</a>
+            <a href="check_score.html">Check Score</a>
+            <a href="top_group_a.html">Top A Students</a>
+        </nav>
+        <main class="main">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh;">
+                <form id="scoreForm" style="display: flex; gap: 8px; align-items: center;">
+                    <label for="sbd">Enter Registration Number:</label>
+                    <input type="text" id="sbd" placeholder="Registration Number" required>
+                    <button type="submit">Check Score</button>
+                </form>
+                <div id="result" style="margin-top: 24px; width: 100%; display: flex; justify-content: center;"></div>
+            </div>
+            <script src="js/config.js"></script>
+            <script src="js/check_score.js"></script>
+        </main>
+    </div>
+</body>
+</html>
+
+

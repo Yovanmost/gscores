@@ -3,11 +3,22 @@ from django.db.models import Count, Q, F, Sum, FloatField
 from .models import Student
 from .subjects import Subject
 from .forms import CheckScoreForm
+import logging
+from django.http import HttpResponseServerError
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import StudentSerializer
+from rest_framework import status
 # Create your views here.
 
 # home view
 def home(request):
     return render(request, "scores/home.html")
+
+@api_view(['GET'])
+def home_api(request):
+    return Response({"message": "Welcome to Gscores API!"})
 
 # check score view
 def check_score(request):
@@ -28,12 +39,19 @@ def check_score(request):
         "error": error,
     })
 
-# report view
-import logging
-from django.shortcuts import render
-from django.db.models import Count, Q
-from django.http import HttpResponseServerError
+@api_view(['GET'])
+def check_score_api(request):
+    sbd = request.GET.get('sbd')
+    if not sbd:
+        return Response({'error': 'Missing registration number (sbd).'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        student = Student.objects.get(sbd=sbd)
+        serializer = StudentSerializer(student)
+        return Response(serializer.data)
+    except Student.DoesNotExist:
+        return Response({'error': f'No student found with registration number: {sbd}'}, status=status.HTTP_404_NOT_FOUND)
 
+# report view
 logger = logging.getLogger(__name__)
 
 def report(request):
@@ -116,6 +134,46 @@ def report(request):
         logger.critical(f"Report generation failed: {e}", exc_info=True)
         return HttpResponseServerError("An error occurred while generating the report.")
 
+@api_view(['GET'])
+def report_api(request):
+    subjects = [
+        Subject("toan", "Toán"),
+        Subject("ngu_van", "Ngữ Văn"),
+        Subject("ngoai_ngu", "Ngoại Ngữ"),
+        Subject("vat_li", "Vật Lý"),
+        Subject("hoa_hoc", "Hóa Học"),
+        Subject("sinh_hoc", "Sinh Học"),
+        Subject("lich_su", "Lịch Sử"),
+        Subject("dia_li", "Địa Lý"),
+        Subject("gdcd", "GDCD"),
+    ]
+
+    labels = []
+    data_8 = []
+    data_6_8 = []
+    data_4_6 = []
+    data_lt4 = []
+
+    for subject in subjects:
+        result = Student.objects.aggregate(
+            gte8=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 8})),
+            gte6lt8=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 6, f"{subject.field_name}__lt": 8})),
+            gte4lt6=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 4, f"{subject.field_name}__lt": 6})),
+            lt4=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__lt": 4})),
+        )
+        labels.append(subject.display_name)
+        data_8.append(result.get("gte8", 0))
+        data_6_8.append(result.get("gte6lt8", 0))
+        data_4_6.append(result.get("gte4lt6", 0))
+        data_lt4.append(result.get("lt4", 0))
+
+    return Response({
+        "labels": labels,
+        "data_8": data_8,
+        "data_6_8": data_6_8,
+        "data_4_6": data_4_6,
+        "data_lt4": data_lt4,
+    })
 
 # top 10 students view
 def top_group_a(request):
@@ -134,3 +192,14 @@ def top_group_a(request):
 
 
     return render(request, "scores/top_group_a.html", {"students": students})
+
+@api_view(['GET'])
+def top_group_a_api(request):
+    students = (
+        Student.objects
+        .filter(toan__isnull=False, vat_li__isnull=False, hoa_hoc__isnull=False)
+        .annotate(total_group_a=F("toan") + F("vat_li") + F("hoa_hoc"))
+        .order_by("-total_group_a")[:10]
+    )
+    serializer = StudentSerializer(students, many=True)
+    return Response(serializer.data)
