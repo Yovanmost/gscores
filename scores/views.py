@@ -148,24 +148,20 @@ def report_api(request):
         Subject("gdcd", "GDCD"),
     ]
 
-    labels = []
-    data_8 = []
-    data_6_8 = []
-    data_4_6 = []
-    data_lt4 = []
-
+    aggregate_kwargs = {}
     for subject in subjects:
-        result = Student.objects.aggregate(
-            gte8=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 8})),
-            gte6lt8=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 6, f"{subject.field_name}__lt": 8})),
-            gte4lt6=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 4, f"{subject.field_name}__lt": 6})),
-            lt4=Count(subject.field_name, filter=Q(**{f"{subject.field_name}__lt": 4})),
-        )
-        labels.append(subject.display_name)
-        data_8.append(result.get("gte8", 0))
-        data_6_8.append(result.get("gte6lt8", 0))
-        data_4_6.append(result.get("gte4lt6", 0))
-        data_lt4.append(result.get("lt4", 0))
+        aggregate_kwargs[f"{subject.field_name}_gte8"] = Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 8}))
+        aggregate_kwargs[f"{subject.field_name}_gte6lt8"] = Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 6, f"{subject.field_name}__lt": 8}))
+        aggregate_kwargs[f"{subject.field_name}_gte4lt6"] = Count(subject.field_name, filter=Q(**{f"{subject.field_name}__gte": 4, f"{subject.field_name}__lt": 6}))
+        aggregate_kwargs[f"{subject.field_name}_lt4"] = Count(subject.field_name, filter=Q(**{f"{subject.field_name}__lt": 4}))
+
+    result = Student.objects.aggregate(**aggregate_kwargs)
+
+    labels = [subject.display_name for subject in subjects]
+    data_8 = [result[f"{subject.field_name}_gte8"] for subject in subjects]
+    data_6_8 = [result[f"{subject.field_name}_gte6lt8"] for subject in subjects]
+    data_4_6 = [result[f"{subject.field_name}_gte4lt6"] for subject in subjects]
+    data_lt4 = [result[f"{subject.field_name}_lt4"] for subject in subjects]
 
     return Response({
         "labels": labels,
